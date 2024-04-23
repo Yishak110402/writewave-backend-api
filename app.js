@@ -16,9 +16,9 @@ const mongoURL = "mongodb+srv://yishak:rfTtsGRqkPr5ILhL@write-wave.3yjawuk.mongo
 const localMongoURL = "mongodb://127.0.0.1:27017/writewave"
 
 
-mongoose.connect(localMongoURL,{
+mongoose.connect(mongoURL,{
     useNewUrlParser: true,
-    useCreateIndex: true,
+    useCreateIndex: true, 
     useFindAndModify: false
 }).then(()=>{
     console.log("DB Connection Successful");
