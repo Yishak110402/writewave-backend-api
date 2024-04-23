@@ -6,6 +6,7 @@ const userRouter = require('./routes/userRoutes.js')
 const postRouter = require('./routes/postRoutes.js')
 
 app.use(express.json())
+app.use(express.static("./public"))
 app.use(cors())
 app.use('/users', userRouter)
 app.use('/posts', postRouter)
@@ -15,7 +16,7 @@ const mongoURL = "mongodb+srv://yishak:rfTtsGRqkPr5ILhL@write-wave.3yjawuk.mongo
 const localMongoURL = "mongodb://127.0.0.1:27017/writewave"
 
 
-mongoose.connect(mongoURL,{
+mongoose.connect(localMongoURL,{
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false

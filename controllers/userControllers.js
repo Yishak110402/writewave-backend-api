@@ -1,5 +1,7 @@
 const User = require("./../models/userModel");
 const Post = require("./../models/postModel");
+const fs = require("fs")
+const path = require("path")
 
 exports.getAllUsers = async (req, res) => {
   const users = await User.find();
@@ -65,14 +67,43 @@ exports.deleteUser = async (req, res) => {
         message: "No User found with that ID",
       });
     }
+    console.log(deletedUser);
+
+    fs.unlink(path.resolve(__dirname, `./../public/profiles/${deletedUser.profilePicture}`) , (err)=>{
+      if(err){
+        console.log(err);
+      }
+    })
     res.status(200).json({
       status: "success",
       message: "User deleted successfully",
     });
   } catch (err) {
     res.status(400).json({
-      status:"fail",
-      message:err
-    })
+      status: "fail",
+      message: err,
+    });
   }
+};
+
+exports.confirmUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user || user.length === 0 || req.params.id < 24) {
+    return res.json({
+      status: "fail",
+      message: "User not found",
+    });
+  }
+  next();
+};
+
+exports.addProfilePic = async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.params.id, {
+    profilePicture: req.file.filename,
+  });
+  res.status(200).json({ 
+    status: "success",
+    message: "Profile uploaded",
+    picture: req.file.filename
+  });
 };
