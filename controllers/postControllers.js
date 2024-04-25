@@ -21,6 +21,7 @@ exports.getAllPosts = async (req, res) => {
 
 exports.getPostById = async (req, res) => {
   const post = await Post.findById(req.params.id);
+  const user = await User.findById(post.createdBy)
   if (!post) {
     return res.status(400).json({
       status: "fail",
@@ -31,6 +32,7 @@ exports.getPostById = async (req, res) => {
     status: "success",
     data: {
       post,
+      user
     },
   });
 };
