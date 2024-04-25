@@ -67,7 +67,6 @@ exports.deleteUser = async (req, res) => {
         message: "No User found with that ID",
       });
     }
-    console.log(deletedUser);
 
     fs.unlink(path.resolve(__dirname, `./../public/profiles/${deletedUser.profilePicture}`) , (err)=>{
       if(err){

@@ -23,7 +23,6 @@ const profileUpload = multer({
 router.post("/signup", authControllers.signup);
 router.post("/login", authControllers.login);
 router.get("/", userControllers.getAllUsers);
-// router.get('/:id', userControllers.getUserById)
 router
   .route("/:id")
   .get(userControllers.getUserById)

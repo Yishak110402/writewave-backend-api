@@ -1,7 +1,9 @@
 const Post = require("./../models/postModel");
+const User = require("./../models/userModel")
 
 exports.getAllPosts = async (req, res) => {
   try {
+    const users = await User.find()
     const posts = await Post.aggregate([
       {
         $sort: { createdAt: -1 },
@@ -11,6 +13,7 @@ exports.getAllPosts = async (req, res) => {
       status: "success",
       data: {
         posts,
+        users
       },
     });
   } catch (err) {}
