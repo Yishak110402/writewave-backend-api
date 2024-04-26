@@ -1,9 +1,9 @@
 const Post = require("./../models/postModel");
-const User = require("./../models/userModel")
+const User = require("./../models/userModel");
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const users = await User.find()
+    const users = await User.find();
     const posts = await Post.aggregate([
       {
         $sort: { createdAt: -1 },
@@ -13,7 +13,7 @@ exports.getAllPosts = async (req, res) => {
       status: "success",
       data: {
         posts,
-        users
+        users,
       },
     });
   } catch (err) {}
@@ -21,7 +21,7 @@ exports.getAllPosts = async (req, res) => {
 
 exports.getPostById = async (req, res) => {
   const post = await Post.findById(req.params.id);
-  const user = await User.findById(post.createdBy)
+  const user = await User.findById(post.createdBy);
   if (!post) {
     return res.status(400).json({
       status: "fail",
@@ -32,7 +32,7 @@ exports.getPostById = async (req, res) => {
     status: "success",
     data: {
       post,
-      user
+      user,
     },
   });
 };
@@ -101,6 +101,35 @@ exports.deletePost = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};
+
+exports.addComment = async (req, res) => {
+  try {
+    const { commentContent, commentor } = req.body;
+    const comment = {
+      commentContent,
+      commentor,
+    };
+    const post = await Post.findById(req.params.id);
+    if (post.length === 0 || !post) {
+      return res.json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+    post.comments.push(comment);
+    await post.save();
+    res.status(200).json({
+      status: "success",
+      message: "Comment added successfully",
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({
       status: "fail",
       message: err,
     });

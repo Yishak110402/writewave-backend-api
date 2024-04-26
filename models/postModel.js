@@ -22,7 +22,17 @@ const postSchema = new mongoose.Schema({
         type:String,
         required:true,
         trim: true
-    }
+    },
+    comments: [
+        {
+            commentor:{
+                type: String
+            },
+            commentContent:{
+                type: String
+            }
+        }
+    ]
 })
 
 const Post = mongoose.model('Post', postSchema)
