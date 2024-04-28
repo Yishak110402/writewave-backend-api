@@ -114,7 +114,7 @@ exports.addComment = async (req, res) => {
       commentContent,
       commentor,
     };
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
     if (post.length === 0 || !post) {
       return res.json({
         status: "fail",
@@ -133,5 +133,34 @@ exports.addComment = async (req, res) => {
       status: "fail",
       message: err,
     });
+  }
+};
+exports.deleteComment = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.postid,
+      {
+        $pull: { comments: { _id: req.params.commentid } },
+      },
+      { new: true }
+    );
+    if (!post) {
+      return res.json({
+        status: "fail",
+        message: "Post not found",
+      });
+    }
+    // const updatedComments = post.comments.filter(
+    //   (comment) => comment._id !== req.params.commentid
+    // );
+    // console.log(updatedComments);
+    // post.comments = updatedComments;
+    // await post.save();
+    res.status(200).json({
+      status: "success",
+      message: "Comment deleted successfully",
+    });
+  } catch (err) {
+    alert(err);
   }
 };

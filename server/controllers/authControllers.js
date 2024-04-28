@@ -143,7 +143,10 @@ exports.updateUserDetails = async (req, res) => {
       req.body.oldPassword = undefined
       req.body.newPassword = undefined     
     }
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body)
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body,{
+      runValidators: true,
+      new:true
+    })
 
     res.status(200).json({
       status: "success",
