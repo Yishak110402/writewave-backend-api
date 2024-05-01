@@ -161,8 +161,16 @@ exports.updateUserDetails = async (req, res) => {
 };
 
 exports.sendVerification = async (req, res) => {
-  // console.log(req.body);
   try {
+    const user = await User.find({email:req.body.email})
+    console.log(user);
+    if(!user||user.length!== 0){
+      res.json({
+        status:"fail",
+        message:"Email already taken"
+      })
+      return
+    }
     const validEmail = validate.isEmail(req.body.email);
     if (validEmail === false) {
       res.json({

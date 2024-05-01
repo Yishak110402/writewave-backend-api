@@ -40,6 +40,9 @@ exports.sendVerificationEmail = async (options) => {
                 color: #5d4cff;
             }
             body{
+                width:100vw;
+                height: 100vh;
+                background-color:#f7f7f7;
                 padding: 0rem 4rem;
             }
             header h1{
