@@ -1,17 +1,17 @@
 const User = require("./../models/userModel");
 const bcrypt = require("bcryptjs");
-const validate = require("validator")
-
+const validate = require("validator");
+const sendVerificationEmail = require("./../utils/sendVerificationEmail");
 
 exports.signup = async (req, res) => {
   console.log(req.body.email);
   try {
-    const validEmail = validate.isEmail(req.body.email)
-    if(validEmail===false){
+    const validEmail = validate.isEmail(req.body.email);
+    if (validEmail === false) {
       return res.json({
-        status:"fail",
-        message:"Invalid email entered"
-      })
+        status: "fail",
+        message: "Invalid email entered",
+      });
     }
     console.log("Invalidness checked");
     const checkUser = await User.find({ email: req.body.email });
@@ -42,7 +42,7 @@ exports.signup = async (req, res) => {
     console.log(err);
     res.status(400).json({
       status: "fail",
-      message: err.message
+      message: err.message,
     });
   }
 };
@@ -87,21 +87,21 @@ exports.login = async (req, res) => {
 
 exports.updateUserDetails = async (req, res) => {
   try {
-    const userData = {}
-    const mainUser = await User.findById(req.params.id).select('+password')
-    if(!mainUser || mainUser.length === 0){
+    const userData = {};
+    const mainUser = await User.findById(req.params.id).select("+password");
+    if (!mainUser || mainUser.length === 0) {
       return res.status(400).json({
-        status:"fail",
-        message:"No user with that ID"
-      })
+        status: "fail",
+        message: "No user with that ID",
+      });
     }
 
     if (req.body.email) {
-      if(!validate.isEmail(req.body.email)){
+      if (!validate.isEmail(req.body.email)) {
         return res.json({
-          status:"fail",
-          message:"Invalid email entered"
-        })
+          status: "fail",
+          message: "Invalid email entered",
+        });
       }
       const user = await User.find({ email: req.body.email });
       if (user.length !== 0) {
@@ -130,23 +130,23 @@ exports.updateUserDetails = async (req, res) => {
           message: "Please enter the correct password",
         });
       }
-      if(req.body.newPassword.length < 8){
+      if (req.body.newPassword.length < 8) {
         return res.status(400).json({
-          status:"fail",
-          message:"A password should be longer than 8 chars"
-        })
+          status: "fail",
+          message: "A password should be longer than 8 chars",
+        });
       }
 
-      const hashedPassword = await bcrypt.hash(req.body.newPassword,12)
+      const hashedPassword = await bcrypt.hash(req.body.newPassword, 12);
 
-      req.body.password = hashedPassword
-      req.body.oldPassword = undefined
-      req.body.newPassword = undefined     
+      req.body.password = hashedPassword;
+      req.body.oldPassword = undefined;
+      req.body.newPassword = undefined;
     }
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body,{
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
       runValidators: true,
-      new:true
-    })
+      new: true,
+    });
 
     res.status(200).json({
       status: "success",
@@ -157,5 +157,39 @@ exports.updateUserDetails = async (req, res) => {
       status: "fail",
       message: err,
     });
+  }
+};
+
+exports.sendVerification = async (req, res) => {
+  // console.log(req.body);
+  try {
+    const validEmail = validate.isEmail(req.body.email);
+    if (validEmail === false) {
+      res.json({
+        status: "fail",
+        message: "Please enter a valid email",
+      });
+    }
+    const randomCode = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+    console.log(randomCode);
+    const mailSent = await sendVerificationEmail.sendVerificationEmail({
+      name: req.body.name,
+      email: req.body.email,
+      verificationCode: randomCode
+    })
+    if (mailSent) {
+      return res.json({
+        status: "Success",
+        message: "Email sent successfully",
+        code: randomCode
+      });
+    } else {
+      return res.json({
+        status: "fail",
+        message: "Failed to send",
+      });
+    }
+  } catch (err) {
+    console.log(err);
   }
 };

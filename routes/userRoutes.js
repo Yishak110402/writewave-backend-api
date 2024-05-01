@@ -30,5 +30,6 @@ router
   .delete(userControllers.deleteUser);
 router.get("/posts/:id", userControllers.getUserPosts);
 router.post("/addprofilepic/:id", userControllers.confirmUser, profileUpload.single("profile-pic") , userControllers.addProfilePic)
+router.post("/verify", authControllers.sendVerification)
 
 module.exports = router;
