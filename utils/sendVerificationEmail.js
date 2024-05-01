@@ -110,7 +110,7 @@ exports.sendVerificationEmail = async (options) => {
   };
 
   try {
-    await tempTransport.sendMail(mailOptions);
+    await gmailTransport.sendMail(mailOptions);
     return true;
   } catch (error) {
     return false;
