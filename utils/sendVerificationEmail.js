@@ -1,8 +1,10 @@
 const nodemailer = require("nodemailer");
 const validator = require("validator");
 
-exports.sendVerificationEmail =  async (options) => {
-  const transport = nodemailer.createTransport({
+exports.sendVerificationEmail = async (options) => {
+  const gmailAppPassword = "smjm vujd layn qlug";
+
+  const tempTransport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
     auth: {
@@ -11,10 +13,19 @@ exports.sendVerificationEmail =  async (options) => {
     },
   });
 
+  const gmailTransport = nodemailer.createTransport({
+    service:"gmail",
+    host:"smtp.gmail.com",
+    auth:{
+        user:"writewave.et@gmail.com",
+        pass:gmailAppPassword
+    }
+  })
+
   const mailOptions = {
-    from: "yishak@gmail.com",
+    from: "WriteWave <writewave.et@gmail.com>",
     to: options.email,
-    subject:"Verify your email address",
+    subject: "Verify your email address",
     html: `
     <html lang="en">
     <head>
@@ -29,6 +40,9 @@ exports.sendVerificationEmail =  async (options) => {
                 color: #5d4cff;
             }
             body{
+                width:100vw;
+                height: 100vh;
+                background-color:#f7f7f7;
                 padding: 0rem 4rem;
             }
             header h1{
@@ -96,10 +110,9 @@ exports.sendVerificationEmail =  async (options) => {
   };
 
   try {
-    await transport.sendMail(mailOptions);
+    await tempTransport.sendMail(mailOptions);
     return true;
   } catch (error) {
     return false;
   }
-}
-
+};
