@@ -1,31 +1,18 @@
 const nodemailer = require("nodemailer");
-const validator = require("validator");
 
-exports.sendVerificationEmail = async (options) => {
-  const gmailAppPassword = "smjm vujd layn qlug";
-
-  const tempTransport = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-      user: "9a18ce9582707b",
-      pass: "47e9006524ec36",
-    },
-  });
-
-  const gmailTransport = nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    auth: {
-      user: "writewave.et@gmail.com",
-      pass: gmailAppPassword,
-    },
-  });
+exports.sendEmail = async (options) => {
+    const tempTransport = nodemailer.createTransport({
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+          user: "9a18ce9582707b",
+          pass: "47e9006524ec36"
+        }
+      });
 
   const mailOptions = {
     from: "WriteWave <writewave.et@gmail.com>",
     to: options.email,
-    subject: "Verify your email address",
     html: `
     <html lang="en">
     <head>
@@ -101,18 +88,18 @@ exports.sendVerificationEmail = async (options) => {
         </header>
         <main>
             <h2>Hello, ${options.name}</h2>
-            <p class="code">${options.verificationCode} is your verification code </p>
+            <p class="code">${options.verificationCode} is your password reset code </p>
             <p class="notice">If you didnt ask for a code please ignore this email</p>
         </main>
     </body>
-    </html>
-        `,
+    </html>`,
   };
 
   try {
     await tempTransport.sendMail(mailOptions);
     return true;
   } catch (error) {
+    console.log(error);
     return false;
   }
 };

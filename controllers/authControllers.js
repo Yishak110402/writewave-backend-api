@@ -2,6 +2,7 @@ const User = require("./../models/userModel");
 const bcrypt = require("bcryptjs");
 const validate = require("validator");
 const sendVerificationEmail = require("./../utils/sendVerificationEmail");
+const sendResetCode = require("./../utils/sendResetCode");
 
 exports.signup = async (req, res) => {
   console.log(req.body.email);
@@ -162,14 +163,14 @@ exports.updateUserDetails = async (req, res) => {
 
 exports.sendVerification = async (req, res) => {
   try {
-    const user = await User.find({email:req.body.email})
+    const user = await User.find({ email: req.body.email });
     console.log(user);
-    if(!user||user.length!== 0){
+    if (!user || user.length !== 0) {
       res.json({
-        status:"fail",
-        message:"Email already taken"
-      })
-      return
+        status: "fail",
+        message: "Email already taken",
+      });
+      return;
     }
     const validEmail = validate.isEmail(req.body.email);
     if (validEmail === false) {
@@ -178,18 +179,19 @@ exports.sendVerification = async (req, res) => {
         message: "Please enter a valid email",
       });
     }
-    const randomCode = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+    const randomCode =
+      Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
     console.log(randomCode);
     const mailSent = await sendVerificationEmail.sendVerificationEmail({
       name: req.body.name,
       email: req.body.email,
-      verificationCode: randomCode
-    })
+      verificationCode: randomCode,
+    });
     if (mailSent) {
       return res.json({
         status: "Success",
         message: "Email sent successfully",
-        code: randomCode
+        code: randomCode,
       });
     } else {
       return res.json({
@@ -199,5 +201,35 @@ exports.sendVerification = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
+  }
+};
+
+exports.sendResetCode = async (req, res) => {
+  const user = await User.findOne({ email: req.params.email });
+  if (!user) {
+    return res.json({
+      status: "fail",
+      message: "No user is linked to that account",
+    });
+  }
+  const randomCode = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+  const options = {
+    name: user.name,
+    email: user.email,
+    verificationCode: randomCode,
+  };
+
+  const mailSent = await sendResetCode.sendEmail(options);
+  if (mailSent) {
+    res.status(200).json({
+      status: "success",
+      message: "Reset code sent successfully",
+      code: randomCode,
+    });
+  }else{
+    res.json({
+      status:"fail",
+      message:"Failed to send email"
+    })
   }
 };

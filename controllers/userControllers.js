@@ -106,3 +106,6 @@ exports.addProfilePic = async (req, res) => {
     picture: req.file.filename
   });
 };
+exports.deleteProfilePicture = async (req, res)=>{
+  // const user = awa 
+}
