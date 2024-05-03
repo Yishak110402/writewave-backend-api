@@ -1,7 +1,8 @@
 const User = require("./../models/userModel");
 const Post = require("./../models/postModel");
-const fs = require("fs")
-const path = require("path")
+const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
 
 exports.getAllUsers = async (req, res) => {
   const users = await User.find();
@@ -68,11 +69,17 @@ exports.deleteUser = async (req, res) => {
       });
     }
 
-    fs.unlink(path.resolve(__dirname, `./../public/profiles/${deletedUser.profilePicture}`) , (err)=>{
-      if(err){
-        console.log(err);
+    fs.unlink(
+      path.resolve(
+        __dirname,
+        `./../public/profiles/${deletedUser.profilePicture}`
+      ),
+      (err) => {
+        if (err) {
+          console.log(err);
+        }
       }
-    })
+    );
     res.status(200).json({
       status: "success",
       message: "User deleted successfully",
@@ -100,12 +107,41 @@ exports.addProfilePic = async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id, {
     profilePicture: req.file.filename,
   });
-  res.status(200).json({ 
+  res.status(200).json({
     status: "success",
     message: "Profile uploaded",
-    picture: req.file.filename
+    picture: req.file.filename,
   });
 };
-exports.deleteProfilePicture = async (req, res)=>{
-  // const user = awa 
-}
+exports.resetPassword = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email });
+    if (!user) {
+      return res.json({
+        status: "fail",
+        message: "No user with that email",
+      });
+    }
+    if(req.body.newPassword !== req.body.confirmPassword){
+      return res.json({
+        status:"fail",
+        message:"Passwords don't match"
+      })
+    }
+    const newHashedPassword = await bcrypt.hash(req.body.newPassword, 12);
+    console.log(newHashedPassword);
+    const updatedUser = await User.findOneAndUpdate(
+      { email: req.params.email },
+      { password: newHashedPassword }
+    );
+    res.status(200).json({
+      status: "success",
+      message: "Password changed successfully",
+    });
+  } catch (err) {
+    res.json({
+      status: "fail",
+      message: err,
+    });
+  }
+};

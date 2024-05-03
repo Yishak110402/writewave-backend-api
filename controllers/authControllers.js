@@ -205,6 +205,13 @@ exports.sendVerification = async (req, res) => {
 };
 
 exports.sendResetCode = async (req, res) => {
+  const validEmail = validate.isEmail(req.params.email)
+  if(!validEmail || req.params.email === ""){
+    return res.json({
+      status:"fail",
+      message:"Please enter a valid email"
+    })
+  }
   const user = await User.findOne({ email: req.params.email });
   if (!user) {
     return res.json({

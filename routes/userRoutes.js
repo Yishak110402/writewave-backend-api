@@ -37,5 +37,6 @@ router.post(
 );
 router.post("/verify", authControllers.sendVerification);
 router.get("/resetcode/:email", authControllers.sendResetCode);
+router.patch("/resetpassword/:email", userControllers.resetPassword)
 
 module.exports = router;
