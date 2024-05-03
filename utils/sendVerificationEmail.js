@@ -2,8 +2,6 @@ const nodemailer = require("nodemailer");
 const validator = require("validator");
 
 exports.sendVerificationEmail = async (options) => {
-  const gmailAppPassword = "smjm vujd layn qlug";
-
   const tempTransport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
@@ -18,7 +16,7 @@ exports.sendVerificationEmail = async (options) => {
     host: "smtp.gmail.com",
     auth: {
       user: "writewave.et@gmail.com",
-      pass: gmailAppPassword,
+      pass: "smjm vujd layn qlug",
     },
   });
 
@@ -110,7 +108,8 @@ exports.sendVerificationEmail = async (options) => {
   };
 
   try {
-    await tempTransport.sendMail(mailOptions);
+    await gmailTransport
+    .sendMail(mailOptions);
     return true;
   } catch (error) {
     return false;

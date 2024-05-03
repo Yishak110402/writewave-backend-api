@@ -10,6 +10,15 @@ exports.sendEmail = async (options) => {
         }
       });
 
+      const gmailTransport = nodemailer.createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        auth: {
+          user: "writewave.et@gmail.com",
+          pass: "smjm vujd layn qlug",
+        },
+      });
+    
   const mailOptions = {
     from: "WriteWave <writewave.et@gmail.com>",
     to: options.email,
@@ -96,7 +105,7 @@ exports.sendEmail = async (options) => {
   };
 
   try {
-    await tempTransport.sendMail(mailOptions);
+    await gmailTransport.sendMail(mailOptions);
     return true;
   } catch (error) {
     console.log(error);
