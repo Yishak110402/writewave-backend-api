@@ -27,7 +27,7 @@ mongoose.connect(mongoURL,{
 })
 
 
-app.get('/test',(req, res)=>{
+app.all('/test',(req, res)=>{
     console.log("Test Successful");
     res.status(200).json({
         message:"Successful"
