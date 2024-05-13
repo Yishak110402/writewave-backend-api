@@ -34,6 +34,13 @@ app.all('/test',(req, res)=>{
     })
 })
 
+app.all('*',(req, res)=>{
+    res.json({
+        status:"fail",
+        message:`Cannot find ${req.originalUrl}`
+    })
+})
+
 app.listen(6969,()=>{
     console.log("listening on port 6969");
 })
