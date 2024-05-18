@@ -1,13 +1,13 @@
 const User = require("./../models/userModel");
 const bcrypt = require("bcryptjs");
-const {isEmail} = require("validator");
+const validate = require("validator");
 const sendVerificationEmail = require("./../utils/sendVerificationEmail");
 const sendResetCode = require("./../utils/sendResetCode");
 
 exports.signup = async (req, res) => {
   console.log(req.body.email);
   try {
-    const validEmail = isEmail(req.body.email);
+    const validEmail = validate.isEmail(req.body.email);
     if (!validEmail) {
       return res.json({
         status: "fail",
